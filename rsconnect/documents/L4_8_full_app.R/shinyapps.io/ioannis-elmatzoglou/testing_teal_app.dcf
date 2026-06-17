@@ -1,0 +1,13 @@
+name: testing_teal_app
+title: testing_teal_app
+username: ioannis-elmatzoglou
+account: ioannis-elmatzoglou
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17522461
+bundleId: 12140302
+url: https://ioannis-elmatzoglou.shinyapps.io/testing_teal_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md
