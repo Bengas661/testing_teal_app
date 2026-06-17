@@ -20,6 +20,26 @@ ADSL <- ADSL %>%
     TRT01A = fct_relevel(TRT01A, arm_levels)
   )
 
+
+
+ADSL <- ADSL %>%
+  mutate(
+    EOTSTT = sample(
+      c("ONGOING", "COMPLETED", "DISCONTINUED"),
+      size = nrow(ADSL),
+      replace = TRUE
+    ) %>% as.factor()
+  ) %>%
+  col_relabel(
+    EOTSTT = "End Of Treatment Status"
+  )
+
+date_vars_asl <- names(ADSL)[vapply(ADSL, function(x) inherits(x, c("Date", "POSIXct", "POSIXlt")), logical(1))]
+demog_vars_asl <- names(ADSL)[!(names(ADSL) %in% c("USUBJID", "STUDYID", date_vars_asl))]
+
+
+
+
 # Variable labels can be included in the app UI and are helpful for users
 ADAE <- ADAE %>%
   mutate(
@@ -62,6 +82,20 @@ app <- init(
       ),
       numeric_stats = c("n", "mean_sd", "median", "range")
     ),
+    
+    
+    tm_t_summary(
+      label = "Disposition Table",
+      dataname = "ADSL",
+      arm_var = choices_selected(c("ARM", "ARMCD"), "ARM"),
+      summarize_vars = choices_selected(
+        variable_choices(ADSL, demog_vars_asl),
+        c("EOSSTT",  "EOTSTT")
+      ),
+      useNA = "ifany"
+    ),
+    
+    
     tm_t_events(
       label = "Adverse Event Table ",
       dataname = "ADAE",
