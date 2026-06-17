@@ -53,7 +53,7 @@ app <- init(
     tm_data_table(),
     tm_variable_browser(),
     tm_t_summary(
-      label = "Demographic Table X",
+      label = "Demographic Table",
       dataname = "ADSL",
       arm_var = cs_arm_var,
       summarize_vars = choices_selected(
@@ -63,7 +63,7 @@ app <- init(
       numeric_stats = c("n", "mean_sd", "median", "range")
     ),
     tm_t_events(
-      label = "Adverse Event Table",
+      label = "Adverse Event Table ",
       dataname = "ADAE",
       arm_var = cs_arm_var,
       llt = choices_selected(
