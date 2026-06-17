@@ -53,7 +53,7 @@ app <- init(
     tm_data_table(),
     tm_variable_browser(),
     tm_t_summary(
-      label = "Demographic Table",
+      label = "Demographic Table X",
       dataname = "ADSL",
       arm_var = cs_arm_var,
       summarize_vars = choices_selected(
