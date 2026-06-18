@@ -6,12 +6,24 @@ library(forcats)
 # Load data ----
 # Ensure character variables are converted to factors and 
 # empty strings and NAs are explicit missing levels.
-ADSL <- df_explicit_na(pharmaverseadam::adsl)
-ADAE <- df_explicit_na(pharmaverseadam::adae)
-ADTTE <- df_explicit_na(pharmaverseadam::adtte_onco)
+
+ADSL <- random.cdisc.data::cadsl
+ADAE <- random.cdisc.data::cadae
+ADEG <- random.cdisc.data::cadeg
+ADTTE = random.cdisc.data::cadtte
+
+
+# ADSL <- df_explicit_na(pharmaverseadam::adsl)
+# ADAE <- df_explicit_na(pharmaverseadam::adae)
+# ADTTE <- df_explicit_na(pharmaverseadam::adtte_onco)
+
+
+# ADEG <- df_explicit_na(pharmaverseadam::adeg)
+
 
 # Data processing steps ----
-arm_levels <- c("Screen Failure", "Placebo", "Xanomeline Low Dose", "Xanomeline High Dose")
+#arm_levels <- c("Screen Failure", "Placebo", "Xanomeline Low Dose", "Xanomeline High Dose")
+arm_levels <- c("B: Placebo", "A: Drug X", "C: Combination")
 
 # Factor levels control the order of display in tables and graphs.
 ADSL <- ADSL %>%
@@ -57,8 +69,8 @@ cs_arm_var <- choices_selected(
 
 arm_ref_comp <- list(
   TRT01P = list(
-    ref = "Placebo",
-    comp = c("Xanomeline Low Dose", "Xanomeline High Dose")
+    ref = "B: Placebo",
+    comp = c("A: Drug X", "C: Combination")
   )
 )
 
@@ -67,6 +79,7 @@ app <- init(
   data = cdisc_data(
     ADSL=ADSL, 
     ADAE=ADAE,
+    ADEG=ADEG,
     ADTTE=ADTTE
   ),
   modules = modules(
@@ -109,9 +122,49 @@ app <- init(
         selected = NULL
       )
     ),
+    
+    
+    
+    tm_t_shift_by_arm(
+      label = "Shift by Arm Table",
+      dataname = "ADEG",
+      arm_var = choices_selected(
+        variable_choices(ADSL, subset = c("ARM", "ARMCD")),
+        selected = "ARM"
+      ),
+      paramcd = choices_selected(
+        value_choices(ADEG, "PARAMCD"),
+        selected = "HR"
+      ),
+      visit_var = choices_selected(
+        value_choices(ADEG, "AVISIT"),
+        selected = "POST-BASELINE MINIMUM"
+      ),
+      aval_var = choices_selected(
+        variable_choices(ADEG, subset = "ANRIND"),
+        selected = "ANRIND", fixed = TRUE
+      ),
+      baseline_var = choices_selected(
+        variable_choices(ADEG, subset = "BNRIND"),
+        selected = "BNRIND", fixed = TRUE
+      ),
+      treatment_flag_var = choices_selected(
+        variable_choices(ADEG, subset = "ONTRTFL"),
+        selected = "ONTRTFL", fixed = TRUE
+      ),
+      treatment_flag = choices_selected(
+        value_choices(ADEG, "ONTRTFL"),
+        selected = "Y", fixed = TRUE
+      )
+    ),
+    
+    
+    
+    
     tm_g_km(
       label = "KM Plot",
       plot_height = c(600, 100, 2000),
+      plot_width = c(1200, 400, 2000),
       dataname = "ADTTE",
       arm_var = cs_arm_var,
       paramcd = choices_selected(
@@ -120,11 +173,11 @@ app <- init(
       ),
       arm_ref_comp = arm_ref_comp,
       strata_var = choices_selected(
-        variable_choices(ADSL, c("SEX", "AGEGR1")),
+        variable_choices(ADSL, c("SEX", "REGION1")),
         NULL
       ),
       facet_var = choices_selected(
-        variable_choices(ADSL, c("SEX", "AGEGR1")),
+        variable_choices(ADSL, c("SEX", "REGION1")),
         NULL
       )
     )
